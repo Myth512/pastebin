@@ -2,8 +2,17 @@
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-use App\Test;
-use Dotenv\Dotenv;
+use App\App;
+use App\Controllers\HomeController;
+use App\Controllers\PasteController;
+use App\Router;
 
-$dotenv = Dotenv::createImmutable(dirname(__DIR__));
-$dotenv->load();
+define('VIEW_PATH', dirname(__DIR__) . '/src/Views/');
+define('UPLOAD_PATH', dirname(__DIR__) . '/uploads/');
+
+$router = new Router([PasteController::class, 'index']);
+$router->post('/paste', [PasteController::class, 'store']);
+$router->get('/', [HomeController::class, 'index']);
+
+$app = new App($router);
+$app->run();

@@ -1,4 +1,5 @@
 /storage
+/app/uploads
 /app/vendor
 /.idea
 .env
