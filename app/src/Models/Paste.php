@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\App;
+use PDO;
 
 function randomString(int $length): string
 {
@@ -27,23 +28,23 @@ class Paste
         file_put_contents($path, $content);
     }
 
-    private function saveToDatabase(string $id): void
+    private function saveToDatabase(string $id, $expiration): void
     {
         $db = App::db();
 
         $stmt = $db->prepare(
-            'INSERT INTO pastes (id, created_at) VALUES (?, NOW())'
+            'INSERT INTO pastes (id, expiration_date, created_at) VALUES (?, ?, NOW())'
         );
 
-        $stmt->execute([$id]);
+        $stmt->execute([$id, $expiration]);
     }
 
-    public function save(string $content): string
+    public function save(string $content, string $expiration): string
     {
         $id = randomString(8);
 
         $this->saveToFile($id, $content);
-        $this->saveToDatabase($id);
+        $this->saveToDatabase($id, $expiration);
 
         return $id;
     }
@@ -65,10 +66,14 @@ class Paste
 
         $stmt->execute([$id]);
 
-        $data = $stmt->fetch();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($data === false)
             return ['error' => 'Paste not found.'];
+
+        if ($data['expiration_date'] < date('Y-m-d H:i:s')) {
+            $data['error'] = 'Paste expired.';
+        }
 
         return $data;
     }

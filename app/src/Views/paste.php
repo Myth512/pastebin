@@ -8,11 +8,24 @@
     <title>Pastebin</title>
 </head>
 <body>
+    <?php if(isset($id)): ?>
+        <h1>ID: <?= $id?></h1>
+    <?php endif; ?>
+
+    <?php if(isset($created_at)): ?>
+        <h1>Created at: <?= $created_at ?></h1>
+    <?php endif; ?>
+
+    <?php if(isset($expiration_date)): ?>
+        <h1>Expire at: <?= $expiration_date ?></h1>
+    <?php endif; ?>
+
     <?php if(isset($error)): ?>
-        <h1><?= $error?></h1>
-    <?php else: ?>
-        <p><?= $created_at?></p>
-        <p><?= $content?></p>
+        <h1>Error: <?= $error?></h1>
+    <?php endif; ?>
+
+    <?php if(isset($content)): ?>
+        <h1>Content: <?= $content?></h1>
     <?php endif; ?>
 </body>
 </html>
