@@ -11,7 +11,15 @@ class PasteController
 {
     public function index(): View
     {
-        return new View('paste', ['uri' => $_SERVER['REQUEST_URI']]);
+        $uri = $_SERVER['REQUEST_URI'];
+
+        $id = substr($uri, 1);
+
+        $paste = new Paste();
+
+        $data = $paste->load($id);
+
+        return new View('paste', $data);
     }
 
     public function store(): void
@@ -20,6 +28,8 @@ class PasteController
 
         $paste = new Paste();
 
-        echo $paste->save($content);
+        $id = $paste->save($content);
+
+        header("Location: /$id");
     }
 }

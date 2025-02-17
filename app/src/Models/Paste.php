@@ -27,7 +27,7 @@ class Paste
         file_put_contents($path, $content);
     }
 
-    private function saveToDatabase(string $id, string $content): void
+    private function saveToDatabase(string $id): void
     {
         $db = App::db();
 
@@ -43,7 +43,7 @@ class Paste
         $id = randomString(8);
 
         $this->saveToFile($id, $content);
-        $this->saveToDatabase($id, $content);
+        $this->saveToDatabase($id);
 
         return $id;
     }
@@ -57,12 +57,34 @@ class Paste
 
     private function loadFromDatabase(string $id): array
     {
-        return [];
+        $db = App::db();
+
+        $stmt = $db->prepare(
+            'SELECT * FROM pastes WHERE id = ?'
+        );
+
+        $stmt->execute([$id]);
+
+        $data = $stmt->fetch();
+
+        if ($data === false)
+            return ['error' => 'Paste not found.'];
+
+        return $data;
     }
 
     public function load(string $id): array
     {
-        return [];
+        $data = $this->loadFromDatabase($id);
+
+        if (isset($data['error']))
+            return $data;
+
+        $content = $this->loadFromFile($id);
+
+        $data['content'] = $content;
+
+        return $data;
     }
 
 }

@@ -8,6 +8,11 @@
     <title>Pastebin</title>
 </head>
 <body>
-    <h1><?= $uri?><h1>
+    <?php if(isset($error)): ?>
+        <h1><?= $error?></h1>
+    <?php else: ?>
+        <p><?= $created_at?></p>
+        <p><?= $content?></p>
+    <?php endif; ?>
 </body>
 </html>
